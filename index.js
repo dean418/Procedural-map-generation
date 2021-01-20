@@ -1,13 +1,19 @@
 import { FloorMap } from "./modules/floorMap.js";
+import { FloorUI } from './modules/canvas.js';
 
-let dungeon = new FloorMap();
-dungeon.mapDungeon();
+let floor = new FloorMap();
+floor.mapDungeon();
 
-for (const [key, value] of dungeon.map.entries()) {
-    console.log('###########');
-    console.log('key ' + key);
+let floorUI = new FloorUI(floor.map);
 
-    for (const thing of value.neighbors) {
-        console.log('neighbor ' + thing.x + '|' + thing.y);
-    }
-}
+
+
+// for (const [key, value] of dungeon.map.entries()) {
+//     console.log('###########');
+//     console.log('key ' + key);
+
+//     for (const thing of value.neighbors) {
+//         console.log('neighbor ' + thing.x + '|' + thing.y);
+//     }
+// }
+

@@ -29,7 +29,7 @@ class FloorMap {
         // co-ords of current room
         let nextX = 0;
         let nextY = 0;
-        for (;;) {
+        while (true) {
             let room = new Room();
             let nextRoom = room.genRoom(nextX, nextY);
 
