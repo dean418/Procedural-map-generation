@@ -1,10 +1,10 @@
 let canvas = document.getElementById('canvas');
 
 class Box {
-    constructor(width, height) {
-        this.width;
-        this.height;
-        this.room;
+    constructor(width, height, room) {
+        this.width = width;
+        this.height = height;
+        this.room = room;
     }
 }
 
@@ -17,17 +17,6 @@ class FloorUI {
         this.canvasSetup();
     }
 
-    /*
-
-    [
-        ['lowX|hiY', 'x|y', 'x|y']
-        ['x|y', 'x|y', 'x|y']
-        ['x|y', 'x|y', 'x|y']
-        ['x|y', 'x|y', 'hiX|lowY']
-    ]
-
-    */
-
     canvasSetup() {
         this.ctx.fillStyle = 'black';
         this.ctx.fillRect(0,0, 900, 600);
@@ -37,9 +26,37 @@ class FloorUI {
         let width = canvas.width / size.xLen;
         let height = canvas.height / size.yLen;
 
-        // create box
-        // add box to floor
-        // assign room to box
+        let xRange = this.getRange(size.coords.minX, size.coords.maxX);
+        let yRange = this.getRange(size.coords.minY, size.coords.maxY);
+        console.log(xRange);
+        console.log(yRange);
+
+        for (let i = 0; i < yRange.length; i++) { // col
+            let row = new Array();
+            for (let j = 0; j < xRange.length; j++) { // row
+                let roomCoord = `${xRange[j]}|${yRange[i]}`;
+
+                if (this.floorMap.has(roomCoord)) {
+                    let box = new Box(width, height, this.floorMap.get(roomCoord));
+                    row.push(box);
+                } else {
+                    row.push('');
+                }
+            }
+            this.floor.push(row);
+        }
+        this.floor.reverse();
+    }
+
+    getRange(start, stop) {
+        let a = [start];
+        let b = start;
+
+        while (b < stop) {
+            a.push(b += 1);
+        }
+
+        return a;
     }
 
     getHeightWidth() {
@@ -66,8 +83,13 @@ class FloorUI {
 
         return {
             xLen: Math.abs(coords.maxX - coords.minX)+1,
-            yLen: Math.abs(coords.maxY - coords.minY)+1
+            yLen: Math.abs(coords.maxY - coords.minY)+1,
+            coords
         }
+    }
+
+    fillCanvas() {
+
     }
 }
 
