@@ -42,26 +42,37 @@ class FloorMap {
                 continue;
             }
 
-           // store current room in map
-           this.map.set(`${room.x}|${room.y}`, room);
+            // if room causes another room to have 4 neighbors, try again
+            for (const [key, value] of this.map.entries()) {
+                let potentialNeighbors = this.assignNeighbors(room.x, room.y);
+
+                for (const potentialNeighbor of potentialNeighbors) {
+                    if (potentialNeighbor.neighbors.length == 3) {
+                        continue;
+                    }
+                }
+            }
+
+            // store current room in map
+            this.map.set(`${room.x}|${room.y}`, room);
 
             // update all room neighbors
             for (const [key, value] of this.map.entries()) {
                 value.neighbors = this.assignNeighbors(value.x, value.y);
             }
 
-            for (const [key, value] of this.map.entries()) {
-                // check  if room has 4 neighbors
-                if (value.neighbors.length == 4) {
-                    //remove room from map
-                    this.map.delete(`${room.x}|${room.y}`);
-                    for (const [key, value] of this.map.entries()) {
-                        // purge room from neighbors
-                        let newNeighbors = value.neighbors.filter(neighbor => (neighbor.x != room.x) && (neighbor.y != room.y));
-                        value.neighbors = newNeighbors;
-                    }
-                }
-            }
+            // for (const [key, value] of this.map.entries()) {
+            //     // check  if room has 4 neighbors
+            //     if (value.neighbors.length == 4) {
+            //         //remove room from map
+            //         for (const [key, value] of this.map.entries()) {
+            //             // purge room from neighbors
+            //             let newNeighbors = value.neighbors.filter(neighbor => (neighbor.x != room.x) && (neighbor.y != room.y));
+            //             // this.map.set(key, {neighbors: newNeighbors})
+            //         }
+            //         this.map.delete(`${room.x}|${room.y}`);
+            //     }
+            // }
 
             // limit to x rooms
             if (this.map.size == this.numOfRooms) {
