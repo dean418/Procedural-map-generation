@@ -6,3 +6,8 @@ html, body {
     align-items: center;
     justify-content: center;
 }
+
+canvas {
+    width: 750px;
+    height: 500px;
+}

@@ -25,7 +25,7 @@ class FloorMap {
         this.map = new Map();
     }
 
-    mapDungeon() {
+    mapFloor() {
         // co-ords of current room
         let nextX = 0;
         let nextY = 0;

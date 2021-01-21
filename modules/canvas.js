@@ -25,11 +25,11 @@ class FloorUI {
 
         let width = canvas.width / size.xLen;
         let height = canvas.height / size.yLen;
+        // console.log(width);
+        // console.log(height);
 
         let xRange = this.getRange(size.coords.minX, size.coords.maxX);
         let yRange = this.getRange(size.coords.minY, size.coords.maxY);
-        console.log(xRange);
-        console.log(yRange);
 
         for (let i = 0; i < yRange.length; i++) { // col
             let row = new Array();
@@ -72,8 +72,6 @@ class FloorUI {
             let x = parseInt(key.slice(0, key.indexOf('|')));
             let y = parseInt(key.slice(key.indexOf('|')+1));
 
-            console.log('x: '+x,'y: '+y);
-
             if (x > coords.maxX) coords.maxX = x;
             if (x < coords.minX) coords.minX = x;
 
@@ -89,7 +87,38 @@ class FloorUI {
     }
 
     fillCanvas() {
+        let curX = 0;
+        let curY = 0;
+        let roomHeight=0;
+        let roomWidth=0;
 
+        for (const row of this.floor) {
+            for (const room of row) {
+                if (room) {
+                    roomHeight = room.height;
+                    roomWidth = room.width;
+                    break;
+                }
+            }
+        }
+        for (const row of this.floor) {
+            for (const room of row) {
+                this.ctx.fillStyle = 'white';
+                this.ctx.strokeStyle = 'black';
+
+                if (room == '') {
+                    this.ctx.fillStyle = 'black';
+                    this.ctx.strokeStyle = 'black';
+                }
+
+                this.ctx.fillRect(curX+2, curY+2, roomWidth-2, roomHeight-2);
+                this.ctx.fill();
+
+                curX += parseInt(roomWidth);
+            }
+            curY += parseInt(roomHeight);
+            curX = 0;
+        }
     }
 }
 
