@@ -1,3 +1,5 @@
+import {LCG} from './LCG.js';
+
 class Room {
     constructor(x, y) {
         this.x = x;
