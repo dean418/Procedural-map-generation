@@ -1,9 +1,7 @@
 let canvas = document.getElementById('canvas');
 
 class Box {
-    constructor(width, height, room) {
-        this.width = width;
-        this.height = height;
+    constructor(room) {
         this.room = room;
     }
 }
@@ -14,7 +12,8 @@ class FloorUI {
         this.floor = new Array();
         this.ctx = canvas.getContext('2d');
 
-        this.canvasSetup();
+        let range = this.canvasSetup();
+        this.floorSetup(range.x, range.y);
     }
 
     canvasSetup() {
@@ -23,27 +22,61 @@ class FloorUI {
 
         let size = this.getHeightWidth();
 
-        let width = canvas.width / size.xLen;
-        let height = canvas.height / size.yLen;
+        //rooms have a size of 50px
+        canvas.width = size.xLen * 50;
+        canvas.height = size.yLen * 50;
 
         let xRange = this.getRange(size.coords.minX, size.coords.maxX);
         let yRange = this.getRange(size.coords.minY, size.coords.maxY);
 
-        for (let i = 0; i < yRange.length; i++) { // col
+        return {x: xRange, y: yRange}
+    }
+
+    floorSetup(xRange, yRange) {
+        for (const y of yRange) {
             let row = new Array();
-            for (let j = 0; j < xRange.length; j++) { // row
-                let roomCoord = `${xRange[j]}|${yRange[i]}`;
+
+            for (const x of xRange){
+                let roomCoord = `${x}|${y}`;
 
                 if (this.floorMap.has(roomCoord)) {
-                    let box = new Box(width, height, this.floorMap.get(roomCoord));
+                    let box = new Box(this.floorMap.get(roomCoord));
                     row.push(box);
                 } else {
+                    //push an empty space to the floor
                     row.push('');
                 }
             }
             this.floor.push(row);
         }
+        //floor needs to be reversed to be in correct orientation
         this.floor.reverse();
+    }
+
+    fillCanvas() {
+        let curX = 2;
+        let curY = 2;
+        let roomHeight=48;
+        let roomWidth=48;
+
+        for (const row of this.floor) {
+            for (const room of row) {
+                this.ctx.fillStyle = 'white';
+                this.ctx.strokeStyle = 'black';
+
+                if (room == '') {
+                    this.ctx.fillStyle = 'black';
+                    this.ctx.strokeStyle = 'black';
+                }
+
+                this.ctx.fillRect(curX, curY, roomWidth, roomHeight);
+                this.ctx.fill();
+
+                curX += parseInt(roomWidth)+2;
+            }
+            curY += parseInt(roomHeight)+2;
+            curX = 2;
+        }
     }
 
     getRange(start, stop) {
@@ -81,41 +114,6 @@ class FloorUI {
             xLen: Math.abs(coords.maxX - coords.minX)+1,
             yLen: Math.abs(coords.maxY - coords.minY)+1,
             coords
-        }
-    }
-
-    fillCanvas() {
-        let curX = 0;
-        let curY = 0;
-        let roomHeight=0;
-        let roomWidth=0;
-
-        for (const row of this.floor) {
-            for (const room of row) {
-                if (room) {
-                    roomHeight = room.height;
-                    roomWidth = room.width;
-                    break;
-                }
-            }
-        }
-        for (const row of this.floor) {
-            for (const room of row) {
-                this.ctx.fillStyle = 'white';
-                this.ctx.strokeStyle = 'black';
-
-                if (room == '') {
-                    this.ctx.fillStyle = 'black';
-                    this.ctx.strokeStyle = 'black';
-                }
-
-                this.ctx.fillRect(curX+2, curY+2, roomWidth-2, roomHeight-2);
-                this.ctx.fill();
-
-                curX += parseInt(roomWidth);
-            }
-            curY += parseInt(roomHeight);
-            curX = 0;
         }
     }
 }
