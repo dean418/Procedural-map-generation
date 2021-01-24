@@ -25,8 +25,6 @@ class FloorUI {
 
         let width = canvas.width / size.xLen;
         let height = canvas.height / size.yLen;
-        // console.log(width);
-        // console.log(height);
 
         let xRange = this.getRange(size.coords.minX, size.coords.maxX);
         let yRange = this.getRange(size.coords.minY, size.coords.maxY);
