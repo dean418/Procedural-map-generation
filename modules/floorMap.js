@@ -5,7 +5,7 @@ class Room {
         this.neighbors = new Array();
     }
 
-    genRoom() {
+    getNextCoords() {
         let directions = [1, -1];
 
         // pick random direction for both axis
@@ -33,7 +33,7 @@ class FloorMap {
         loop:
         while (true) {
             let room = new Room(nextX, nextY);
-            let nextRoom = room.genRoom();
+            let nextRoom = room.getNextCoords();
 
             //co-ords of next room
             nextX = nextRoom.x;
@@ -46,14 +46,16 @@ class FloorMap {
 
             // if room causes another room to have 4 neighbors, try again
             for (const [key, value] of this.map.entries()) {
-                let potentialNeighbors = this.getNeighbors(room.x, room.y);
+                let newNeighbors = this.getNeighbors(room.x, room.y);
 
-                for (const potentialNeighbor of potentialNeighbors) {
-                    if (potentialNeighbor.neighbors.length == 3) {
-                        // need to re-write nextX otherwise theres a chance of islands forming
+                for (const newNeighbor of newNeighbors) {
+                    // each room can't have more than 3 neighbors
+                    if (newNeighbor.neighbors.length == 3) {
+                        //next generated room will always be on a diagonal to another room
                         let diags = this.getDiags(room.x,room.y);
-                        let next = diags[0].genRoom();
+                        let next = diags.getNextCoords();
 
+                        // use closest room to try again
                         nextX = next.x;
                         nextY = next.y;
 
@@ -62,13 +64,9 @@ class FloorMap {
                 }
             }
 
-            // store current room in map
-            this.map.set(`${room.x}|${room.y}`, room);
+            this.storeRoom(room);
 
-            // update all room neighbors
-            for (const [key, value] of this.map.entries()) {
-                value.neighbors = this.getNeighbors(value.x, value.y);
-            }
+            this.updateNeighbors();
 
             // limit to x rooms
             if (this.map.size == this.numOfRooms) {
@@ -82,44 +80,48 @@ class FloorMap {
         return rooms[Math.floor(Math.random() * rooms.length)];
     }
 
+    updateNeighbors() {
+        for (const [key, value] of this.map.entries()) {
+            value.neighbors = this.getNeighbors(value.x, value.y);
+        }
+    }
+
+    storeRoom(room) {
+        this.map.set(`${room.x}|${room.y}`, room);
+    }
+
     getNeighbors(x, y) {
         let neighbors = new Array();
 
-        if (this.map.has(`${x}|${y + 1}`)) {
+        if (this.map.has(`${x}|${y + 1}`)) { // up
             neighbors.push(this.map.get(`${x}|${y + 1}`));
         }
-        if (this.map.has(`${x}|${y - 1}`)) {
+        if (this.map.has(`${x}|${y - 1}`)) { // down
             neighbors.push(this.map.get(`${x}|${y - 1}`));
         }
-        if (this.map.has(`${x+1}|${y}`)) {
-            neighbors.push(this.map.get(`${x + 1}|${y}`));
-        }
-        if (this.map.has(`${x-1}|${y}`)) {
+        if (this.map.has(`${x-1}|${y}`)) { // left
             neighbors.push(this.map.get(`${x - 1}|${y}`));
+        }
+        if (this.map.has(`${x+1}|${y}`)) { // right
+            neighbors.push(this.map.get(`${x + 1}|${y}`));
         }
 
         return neighbors;
     }
 
     getDiags(x, y) {
-        let diags = new Array();
-
-        if (this.map.has(`${x+1}|${y+1}`)) {
-            diags.push(this.map.get(`${x+1}|${y + 1}`));
+        if (this.map.has(`${x-1}|${y+1}`)) { // top left
+            return this.map.get(`${x-1}|${y+1}`);
         }
-        if (this.map.has(`${x-1}|${y+1}`)) {
-            diags.push(this.map.get(`${x-1}|${y+1}`));
+        if (this.map.has(`${x+1}|${y+1}`)) { // top right
+            return this.map.get(`${x+1}|${y+1}`);
         }
-
-        if (this.map.has(`${x+1}|${y-1}`)) {
-            diags.push(this.map.get(`${x+1}|${y-1}`));
+        if (this.map.has(`${x-1}|${y-1}`)) { // bottom left
+            return this.map.get(`${x-1}|${y-1}`);
         }
-
-        if (this.map.has(`${x-1}|${y-1}`)) {
-            diags.push(this.map.get(`${x-1}|${y-1}`));
+        if (this.map.has(`${x+1}|${y-1}`)) { // bottom right
+            return this.map.get(`${x+1}|${y-1}`);
         }
-
-        return diags;
     }
 }
 
