@@ -1,4 +1,4 @@
-import {LCG} from './LCG.js';
+import {getRandNum} from './mersenne.js';
 
 class Room {
     constructor(x, y) {
@@ -7,24 +7,28 @@ class Room {
         this.neighbors = new Array();
     }
 
-    getNextCoords() {
-        let directions = [1, -1];
+    getNextCoords(randNum) {
+        let directions = [1, -1, 1, -1];
 
-        // pick random direction for both axis
-        let nextX = directions[Math.round(Math.random())];
-        let nextY = directions[Math.round(Math.random())];
+        let nextX = 0;//= directions[Math.round(Math.random())]
+        let nextY = 0; //= directions[Math.round(Math.random())]
+
+        randNum <= 2 ? nextX = directions[randNum] : nextY = directions[randNum];
+
+        // pick random direction for both axis based on random number
 
         // no diags, convert one to 0
-        Math.round(Math.random()) ? nextX = 0 : nextY = 0;
+        // Math.round(Math.random()) ? nextX = 0 : nextY = 0;
 
         return {x:this.x + nextX, y:this.y + nextY}
     }
 }
 
 class FloorMap {
-    constructor(rooms = 10) {
+    constructor(rooms = 10, seed=567) {
         this.numOfRooms = rooms;
         this.map = new Map();
+        this.mersenne = getRandNum(seed);
     }
 
     mapFloor() {
@@ -35,7 +39,7 @@ class FloorMap {
         loop:
         while (true) {
             let room = new Room(nextX, nextY);
-            let nextRoom = room.getNextCoords();
+            let nextRoom = room.getNextCoords(this.mersenne.next().value%4);
 
             //co-ords of next room
             nextX = nextRoom.x;
@@ -55,7 +59,7 @@ class FloorMap {
                     if (newNeighbor.neighbors.length == 3) {
                         //next generated room will always be on a diagonal to another room
                         let diags = this.getDiags(room.x,room.y);
-                        let next = diags.getNextCoords();
+                        let next = diags.getNextCoords(this.mersenne.next().value%4);
 
                         // use closest room to try again
                         nextX = next.x;
