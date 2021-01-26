@@ -19,7 +19,7 @@ class Room {
 }
 
 class FloorMap {
-    constructor(rooms=10, seed=1) {
+    constructor(rooms=10, seed=this.genSeed()) {
         this.numOfRooms = rooms;
         this.map = new Map();
         this.mersenne = getRandNum(seed);
@@ -124,6 +124,10 @@ class FloorMap {
         if (this.map.has(`${x+1}|${y-1}`)) { // bottom right
             return this.map.get(`${x+1}|${y-1}`);
         }
+    }
+
+    genSeed() {
+        return Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
     }
 }
 
