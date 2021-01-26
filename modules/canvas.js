@@ -72,6 +72,12 @@ class FloorUI {
                 this.ctx.fillRect(curX, curY, roomWidth, roomHeight);
                 this.ctx.fill();
 
+                if (room) {
+                    this.ctx.fillStyle = '#000000';
+                    this.ctx.fillText(`${room.room.x},${room.room.y}`, curX + 15, curY + 28);
+                }
+
+
                 curX += parseInt(roomWidth)+2;
             }
             curY += parseInt(roomHeight)+2;

@@ -25,7 +25,6 @@ class Mersenne {
 function* getRandNum(seed=1) {
     let mersenne = new Mersenne(seed);
     let counter = 1;
-    console.log(mersenne.mt);
 
     while (true) {
         yield mersenne.mt[counter];

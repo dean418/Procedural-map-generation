@@ -19,7 +19,7 @@ class Room {
 }
 
 class FloorMap {
-    constructor(rooms=10, seed=567) {
+    constructor(rooms=10, seed=1) {
         this.numOfRooms = rooms;
         this.map = new Map();
         this.mersenne = getRandNum(seed);
