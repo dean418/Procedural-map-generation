@@ -23,54 +23,56 @@ class FloorMap {
         this.numOfRooms = rooms;
         this.map = new Map();
         this.mersenne = getRandNum(seed);
+        this.nextX = 0;
+        this.nextY = 0;
     }
 
     mapFloor() {
-        // co-ords of current room
-        let nextX = 0;
-        let nextY = 0;
-
-        loop:
         while (true) {
-            let room = new Room(nextX, nextY);
+            let room = new Room(this.nextX, this.nextY);
             let nextRoom = room.getNextCoords(this.mersenne.next().value%4);
 
             //co-ords of next room
-            nextX = nextRoom.x;
-            nextY = nextRoom.y;
+            this.nextX = nextRoom.x;
+            this.nextY = nextRoom.y;
 
             // same co-ords generated try again
-            if (this.map.has(`${nextX}|${nextY}`)) {
+            if (this.map.has(`${this.nextX}|${this.nextY}`)) {
                 continue;
             }
 
-            // if room causes another room to have 4 neighbors, try again
-            for (const [key, value] of this.map.entries()) {
-                let newNeighbors = this.getNeighbors(room.x, room.y);
-
-                for (const newNeighbor of newNeighbors) {
-                    // each room can't have more than 3 neighbors
-                    if (newNeighbor.neighbors.length == 3) {
-                        //next generated room will always be on a diagonal to another room
-                        let diags = this.getDiags(room.x,room.y);
-                        let next = diags.getNextCoords(this.mersenne.next().value%4);
-
-                        // use closest room to try again
-                        nextX = next.x;
-                        nextY = next.y;
-
-                        continue loop;
-                    }
-                }
+            if (this.checkNumOfNeighbors(room)) {
+                continue;
             }
 
             this.storeRoom(room);
-
             this.updateNeighbors();
 
             // limit to x rooms
             if (this.map.size == this.numOfRooms) {
                 break;
+            }
+        }
+    }
+
+    checkNumOfNeighbors(room) {
+        // if room causes another room to have 4 neighbors, try again
+        for (const [key, value] of this.map.entries()) {
+            let newNeighbors = this.getNeighbors(room.x, room.y);
+
+            for (const newNeighbor of newNeighbors) {
+                // each room can't have more than 3 neighbors
+                if (newNeighbor.neighbors.length == 3) {
+                    //next generated room will always be on a diagonal to another room
+                    let diags = this.getDiags(room.x,room.y);
+                    let next = diags.getNextCoords(this.mersenne.next().value%4);
+
+                    // use closest room to try again
+                    this.nextX = next.x;
+                    this.nextY = next.y;
+
+                    return true;
+                }
             }
         }
     }
