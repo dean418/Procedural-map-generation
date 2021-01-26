@@ -34,9 +34,3 @@ function* getRandNum(seed=1) {
 }
 
 export {getRandNum}
-
-// let iterator = getRandNum(12345);
-
-// for (let i = 0; i < 100; i++) {
-//     console.log(iterator.next().value%4);
-// }

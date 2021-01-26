@@ -9,23 +9,17 @@ class Room {
 
     getNextCoords(randNum) {
         let directions = [1, -1, 1, -1];
-
-        let nextX = 0;//= directions[Math.round(Math.random())]
-        let nextY = 0; //= directions[Math.round(Math.random())]
+        let nextX = 0;
+        let nextY = 0;
 
         randNum <= 2 ? nextX = directions[randNum] : nextY = directions[randNum];
-
-        // pick random direction for both axis based on random number
-
-        // no diags, convert one to 0
-        // Math.round(Math.random()) ? nextX = 0 : nextY = 0;
 
         return {x:this.x + nextX, y:this.y + nextY}
     }
 }
 
 class FloorMap {
-    constructor(rooms = 10, seed=567) {
+    constructor(rooms=10, seed=567) {
         this.numOfRooms = rooms;
         this.map = new Map();
         this.mersenne = getRandNum(seed);
