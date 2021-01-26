@@ -22,6 +22,7 @@ class FloorMap {
     constructor(rooms=10, seed=this.genSeed()) {
         this.numOfRooms = rooms;
         this.map = new Map();
+        this.seed = seed;
         this.mersenne = getRandNum(seed);
         this.nextX = 0;
         this.nextY = 0;
